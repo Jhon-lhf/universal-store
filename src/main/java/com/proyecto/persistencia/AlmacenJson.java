@@ -3,7 +3,7 @@ package com.proyecto.persistencia;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tienda.servicio.ExcepcionNegocio;
+import com.proyecto.servicio.ExcepcionNegocio;
 
 import java.io.IOException;
 import java.io.Reader;
