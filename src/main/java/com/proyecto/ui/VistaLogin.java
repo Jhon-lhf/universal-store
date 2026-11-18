@@ -52,7 +52,7 @@ public class VistaLogin {
         // --- Marca ---
         VBox marca = new VBox(8);
         marca.setAlignment(Pos.CENTER);
-        marca.getChildren().addAll(crearLogo(), new Label("proyecto Virtual"));
+        marca.getChildren().addAll(crearLogo(), new Label("Tienda Virtual"));
         marca.getChildren().get(1).getStyleClass().add("marca-grande");
         Label lema = new Label("Todo lo que buscas, en un solo lugar");
         lema.getStyleClass().add("texto-apagado");
