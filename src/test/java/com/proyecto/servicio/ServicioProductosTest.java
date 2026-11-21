@@ -109,7 +109,7 @@ class ServicioProductosTest {
     @Test
     void crearProductoGeneraIdYVinculaVendedor() {
         Producto creado = servicio.crear(
-                new ServicioProductos.DatosProducto("Silla Ergonómica", "Respaldo lumbar.", 420.00, 10, "C-3"),
+                new ServicioProductos.DatosProducto("Silla Ergonómica", "Respaldo lumbar.", 420.00, 10, "C-3", null),
                 "U-vendedor");
         assertTrue(creado.getId().startsWith("P-"));
         assertEquals("U-vendedor", creado.getVendedorId());
@@ -120,14 +120,14 @@ class ServicioProductosTest {
     @Test
     void crearConCategoriaInexistenteFalla() {
         ExcepcionNegocio e = assertThrows(ExcepcionNegocio.class,
-                () -> servicio.crear(new ServicioProductos.DatosProducto("X", "", 10, 1, "C-999"), "U-vendedor"));
+                () -> servicio.crear(new ServicioProductos.DatosProducto("X", "", 10, 1, "C-999", null), "U-vendedor"));
         assertTrue(e.getMessage().contains("categoría"));
     }
 
     @Test
     void crearConPrecioInvalidoFalla() {
         assertThrows(ExcepcionNegocio.class,
-                () -> servicio.crear(new ServicioProductos.DatosProducto("X", "", 0, 1, "C-1"), "U-vendedor"));
+                () -> servicio.crear(new ServicioProductos.DatosProducto("X", "", 0, 1, "C-1", null), "U-vendedor"));
     }
 
     @Test

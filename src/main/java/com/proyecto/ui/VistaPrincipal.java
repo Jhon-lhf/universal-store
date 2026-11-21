@@ -46,9 +46,9 @@ public class VistaPrincipal {
                     new Pestana("deseos", "Deseos", true),
                     new Pestana("pedidos", "Mis pedidos", true)),
             Rol.VENDEDOR, List.of(
-                    new Pestana("cola", "Cola FIFO", false),
-                    new Pestana("stock", "Mi stock", false),
-                    new Pestana("nuevo", "Nuevo producto", false)),
+                    new Pestana("cola", "Cola FIFO", true),
+                    new Pestana("stock", "Mi stock", true),
+                    new Pestana("nuevo", "Nuevo producto", true)),
             Rol.ADMINISTRADOR, List.of(
                     new Pestana("usuarios", "Usuarios", false),
                     new Pestana("global", "Catálogo global", false),
@@ -72,15 +72,6 @@ public class VistaPrincipal {
             Map.entry("metricas", Iconos.GRAFICO));
 
     private static final Map<String, DatosModulo> MODULOS_PRONTOS = Map.of(
-            "cola", new DatosModulo("Cola de despacho (FIFO)",
-                    "Atiende los pedidos en orden de llegada, sin injusticias ni \"piches\".",
-                    List.of("Despachar siguiente (→ ENVIADO)", "Marcar seleccionado ENTREGADO", "La cola no se reordena a propósito")),
-            "stock", new DatosModulo("Mi stock",
-                    "Controla el inventario de tus productos.",
-                    List.of("Solo ves lo que publicaste", "Actualizar stock afecta lo que puede comprar el cliente")),
-            "nuevo", new DatosModulo("Nuevo producto",
-                    "Publica productos en el catálogo.",
-                    List.of("Elige una categoría aprobada del selector", "¿Ninguna encaja? Solicita una nueva al admin", "La imagen se copia a assets/images")),
             "usuarios", new DatosModulo("Usuarios",
                     "Moderación de cuentas del sistema.",
                     List.of("Bloquear/Desbloquear (un bloqueado no puede entrar)", "Cambiar rol CLIENTE ↔ VENDEDOR")),
@@ -368,6 +359,19 @@ public class VistaPrincipal {
         if ("pedidos".equals(idModulo)) {
             return new VistaPedidos(app,
                     (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("cola".equals(idModulo)) {
+            return new VistaColaDespacho(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("stock".equals(idModulo)) {
+            return new VistaMiStock(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("nuevo".equals(idModulo)) {
+            return new VistaNuevoProducto(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje),
+                    () -> navegarAModulo("catalogo")).getRaiz();
         }
         DatosModulo datos = MODULOS_PRONTOS.get(idModulo);
         if (datos == null) {

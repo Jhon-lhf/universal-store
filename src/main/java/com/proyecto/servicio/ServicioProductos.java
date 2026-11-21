@@ -85,6 +85,7 @@ public class ServicioProductos {
                 datos.categoriaId(),
                 vendedorId,
                 LocalDate.now().toString());
+        producto.setNombreImagen(datos.nombreImagen());
         repositorioProductos.guardar(producto);
         return producto;
     }
@@ -133,6 +134,15 @@ public class ServicioProductos {
     }
 
     /**
+     * Productos publicados por un vendedor (para su panel de stock).
+     */
+    public List<Producto> listarPorVendedor(String vendedorId) {
+        return repositorioProductos.leerTodos().stream()
+                .filter(p -> p.getVendedorId().equals(vendedorId))
+                .toList();
+    }
+
+    /**
      * Criterios de búsqueda del catálogo (null = sin filtro).
      */
     public record CriteriosBusqueda(String texto, String categoriaId,
@@ -143,6 +153,6 @@ public class ServicioProductos {
      * Datos de entrada para publicar un producto.
      */
     public record DatosProducto(String titulo, String descripcion, double precio,
-                                int stock, String categoriaId) {
+                                int stock, String categoriaId, String nombreImagen) {
     }
 }
