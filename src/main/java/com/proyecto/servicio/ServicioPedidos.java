@@ -117,6 +117,62 @@ public class ServicioPedidos {
         repositorioPedidos.guardar(pedido);
     }
 
+    // ---------------------------------------------------------------- módulo del vendedor
+
+    /**
+     * Pedidos pendientes que contienen al menos un ítem publicado por el
+     * vendedor, ordenados de más antiguo a más reciente (orden de llegada).
+     * Es la cola de despacho del vendedor.
+     */
+    public java.util.List<Pedido> listarPendientesPorVendedor(String vendedorId) {
+        return repositorioPedidos.leerTodos().stream()
+                .filter(p -> p.getEstado() == EstadoPedido.PENDIENTE)
+                .filter(p -> p.getItems().stream()
+                        .anyMatch(i -> i.getVendedorId().equals(vendedorId)))
+                .sorted(java.util.Comparator.comparing(Pedido::getFecha))
+                .toList();
+    }
+
+    /**
+     * Despacha el siguiente pedido de la cola: el más antiguo entre los
+     * pendientes que tengan ítems del vendedor. Pasa su estado de
+     * PENDIENTE a ENVIADO.
+     *
+     * @throws ExcepcionNegocio si no hay pedidos pendientes para este vendedor.
+     */
+    public Pedido despacharSiguiente(String vendedorId) {
+        java.util.List<Pedido> pendientes = listarPendientesPorVendedor(vendedorId);
+        if (pendientes.isEmpty()) {
+            throw new ExcepcionNegocio("No hay pedidos pendientes en tu cola");
+        }
+        Pedido siguiente = pendientes.get(0);
+        siguiente.setEstado(EstadoPedido.ENVIADO);
+        repositorioPedidos.guardar(siguiente);
+        return siguiente;
+    }
+
+    /**
+     * Marca un pedido como ENTREGADO.
+     *
+     * @throws ExcepcionNegocio si el pedido no existe, no tiene ítems del
+     *                          vendedor, o no está ENVIADO (solo se puede
+     *                          entregar lo que ya fue despachado).
+     */
+    public void marcarEntregado(String pedidoId, String vendedorId) {
+        Pedido pedido = repositorioPedidos.buscarPorId(pedidoId)
+                .orElseThrow(() -> new ExcepcionNegocio("El pedido no existe"));
+        boolean tieneItemDelVendedor = pedido.getItems().stream()
+                .anyMatch(i -> i.getVendedorId().equals(vendedorId));
+        if (!tieneItemDelVendedor) {
+            throw new ExcepcionNegocio("Ese pedido no contiene tus productos");
+        }
+        if (pedido.getEstado() != EstadoPedido.ENVIADO) {
+            throw new ExcepcionNegocio("Solo se pueden entregar pedidos despachados");
+        }
+        pedido.setEstado(EstadoPedido.ENTREGADO);
+        repositorioPedidos.guardar(pedido);
+    }
+
     private double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }
