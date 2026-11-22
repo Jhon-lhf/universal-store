@@ -136,8 +136,24 @@ public class VistaPedidos {
             btnCancelar.getStyleClass().add("btn");
             btnCancelar.setOnAction(e -> cancelar(pedido));
             tarjeta.getChildren().add(btnCancelar);
+        } else if (pedido.getEstado() == EstadoPedido.ENVIADO) {
+            Button btnRecibir = new Button("Marcar como recibido");
+            btnRecibir.getStyleClass().addAll("btn", "btn-primario");
+            btnRecibir.setOnAction(e -> recibir(pedido));
+            tarjeta.getChildren().add(btnRecibir);
         }
         return tarjeta;
+    }
+
+    private void recibir(Pedido pedido) {
+        try {
+            app.getServicioPedidos().recibirPedido(pedido.getId(), idSesion());
+            refrescar();
+            avisador.accept(Avisos.Tipo.EXITO, "Pedido " + pedido.getId()
+                    + " marcado como ENTREGADO. ¡Gracias por tu compra!");
+        } catch (ExcepcionNegocio e) {
+            avisador.accept(Avisos.Tipo.ERROR, e.getMessage());
+        }
     }
 
     /**

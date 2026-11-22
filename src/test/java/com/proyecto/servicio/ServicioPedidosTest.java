@@ -126,4 +126,115 @@ class ServicioPedidosTest {
         // El más reciente primero.
         assertTrue(propios.get(0).getFecha().compareTo(propios.get(1).getFecha()) >= 0);
     }
+
+    // ---------------------------------------------------------------- vendedor
+
+    @Test
+    void listarPendientesPorVendedorDevuelveSoloSusPedidosEnOrdenLlegada() {
+        // Creo tres pedidos para el vendedor "U-ven" (todos los productos de prueba son suyos).
+        servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli1", "Cliente 1");
+        servicio.crearPedido(List.of(new CarritoItem("P-2", 1)), "U-cli2", "Cliente 2");
+        servicio.crearPedido(List.of(new CarritoItem("P-3", 1)), "U-cli3", "Cliente 3");
+
+        List<Pedido> pendientes = servicio.listarPendientesPorVendedor("U-ven");
+        assertEquals(3, pendientes.size());
+        // Orden de llegada: el más antiguo primero.
+        assertTrue(pendientes.get(0).getFecha().compareTo(pendientes.get(1).getFecha()) <= 0);
+        assertTrue(pendientes.get(1).getFecha().compareTo(pendientes.get(2).getFecha()) <= 0);
+    }
+
+    @Test
+    void despacharSiguienteCambiaAPendienteAEnviado() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        Pedido despachado = servicio.despacharSiguiente("U-ven");
+        assertEquals(pedido.getId(), despachado.getId());
+        assertEquals(EstadoPedido.ENVIADO, despachado.getEstado());
+
+        // Ya no está en la lista de pendientes.
+        assertTrue(servicio.listarPendientesPorVendedor("U-ven").isEmpty());
+    }
+
+    @Test
+    void despacharSinPedidosLanzaExcepcion() {
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.despacharSiguiente("U-ven"));
+        assertEquals("No hay pedidos pendientes en tu cola", excepcion.getMessage());
+    }
+
+    @Test
+    void marcarEntregadoRequiereEstadoEnviado() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        servicio.despacharSiguiente("U-ven");
+
+        servicio.marcarEntregado(pedido.getId(), "U-ven");
+
+        // Ya no aparece en pendientes.
+        assertTrue(servicio.listarPendientesPorVendedor("U-ven").isEmpty());
+
+        // Intentar marcarlo de nuevo falla porque ya no está ENVIADO.
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.marcarEntregado(pedido.getId(), "U-ven"));
+        assertEquals("Solo se pueden entregar pedidos despachados", excepcion.getMessage());
+    }
+
+    @Test
+    void noPuedeEntregarPedidoQueNoEstaEnviado() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.marcarEntregado(pedido.getId(), "U-ven"));
+        assertEquals("Solo se pueden entregar pedidos despachados", excepcion.getMessage());
+    }
+
+    @Test
+    void noPuedeDespacharPedidoDeOtroVendedor() {
+        // Creo un pedido pero consulto para un vendedor que no tiene ningún producto.
+        servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        List<Pedido> pendientes = servicio.listarPendientesPorVendedor("U-otro-vendedor");
+        assertTrue(pendientes.isEmpty());
+    }
+
+    // ---------------------------------------------------------------- cliente recibe pedido
+
+    @Test
+    void recibirPedidoCambiaDeEnviadoAEntregado() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        servicio.despacharSiguiente("U-ven");
+
+        servicio.recibirPedido(pedido.getId(), "U-cli");
+        assertEquals(EstadoPedido.ENTREGADO,
+                servicio.listarPorCliente("U-cli").stream()
+                        .filter(p -> p.getId().equals(pedido.getId()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getEstado());
+    }
+
+    @Test
+    void recibirPedidoQueNoEsEnviadoFalla() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.recibirPedido(pedido.getId(), "U-cli"));
+        assertEquals("Solo se pueden recibir pedidos despachados", excepcion.getMessage());
+    }
+
+    @Test
+    void recibirPedidoDeOtroClienteFalla() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        servicio.despacharSiguiente("U-ven");
+
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.recibirPedido(pedido.getId(), "U-otro"));
+        assertEquals("Ese pedido no te pertenece", excepcion.getMessage());
+    }
+
+    @Test
+    void pedidoEntregadoNoSePuedeRecibirDeNuevo() {
+        Pedido pedido = servicio.crearPedido(List.of(new CarritoItem("P-1", 1)), "U-cli", "Cliente Demo");
+        servicio.despacharSiguiente("U-ven");
+        servicio.recibirPedido(pedido.getId(), "U-cli");
+
+        ExcepcionNegocio excepcion = assertThrows(ExcepcionNegocio.class,
+                () -> servicio.recibirPedido(pedido.getId(), "U-cli"));
+        assertEquals("Solo se pueden recibir pedidos despachados", excepcion.getMessage());
+    }
 }

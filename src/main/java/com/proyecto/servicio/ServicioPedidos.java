@@ -173,6 +173,27 @@ public class ServicioPedidos {
         repositorioPedidos.guardar(pedido);
     }
 
+    /**
+     * El cliente confirma haber recibido su pedido. Pasa el estado de
+     * ENVIADO a ENTREGADO, cerrando el flujo de venta.
+     *
+     * @throws ExcepcionNegocio si el pedido no existe, no es del cliente,
+     *                          o no está ENVIADO (solo se puede recibir lo
+     *                          que ya fue despachado).
+     */
+    public void recibirPedido(String pedidoId, String clienteId) {
+        Pedido pedido = repositorioPedidos.buscarPorId(pedidoId)
+                .orElseThrow(() -> new ExcepcionNegocio("El pedido no existe"));
+        if (!pedido.getClienteId().equals(clienteId)) {
+            throw new ExcepcionNegocio("Ese pedido no te pertenece");
+        }
+        if (pedido.getEstado() != EstadoPedido.ENVIADO) {
+            throw new ExcepcionNegocio("Solo se pueden recibir pedidos despachados");
+        }
+        pedido.setEstado(EstadoPedido.ENTREGADO);
+        repositorioPedidos.guardar(pedido);
+    }
+
     private double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }
