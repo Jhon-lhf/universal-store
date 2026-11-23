@@ -50,10 +50,10 @@ public class VistaPrincipal {
                     new Pestana("stock", "Mi stock", true),
                     new Pestana("nuevo", "Nuevo producto", true)),
             Rol.ADMINISTRADOR, List.of(
-                    new Pestana("usuarios", "Usuarios", false),
-                    new Pestana("global", "Catálogo global", false),
-                    new Pestana("categorias", "Categorías", false),
-                    new Pestana("metricas", "Métricas", false)));
+                    new Pestana("usuarios", "Usuarios", true),
+                    new Pestana("global", "Catálogo global", true),
+                    new Pestana("categorias", "Categorías", true),
+                    new Pestana("metricas", "Métricas", true)));
 
     /**
      * Icono vectorial de cada módulo (ver {@link Iconos}).
@@ -71,19 +71,7 @@ public class VistaPrincipal {
             Map.entry("categorias", Iconos.CAPAS),
             Map.entry("metricas", Iconos.GRAFICO));
 
-    private static final Map<String, DatosModulo> MODULOS_PRONTOS = Map.of(
-            "usuarios", new DatosModulo("Usuarios",
-                    "Moderación de cuentas del sistema.",
-                    List.of("Bloquear/Desbloquear (un bloqueado no puede entrar)", "Cambiar rol CLIENTE ↔ VENDEDOR")),
-            "global", new DatosModulo("Catálogo global",
-                    "Visión y control total del inventario.",
-                    List.of("Todos los productos de todos los vendedores", "Eliminar producto seleccionado")),
-            "categorias", new DatosModulo("Categorías",
-                    "Gobierno de las categorías del sistema.",
-                    List.of("Aprueba o rechaza solicitudes de vendedores", "Crea categorías directamente", "Solo categorías aprobadas aparecen al publicar")),
-            "metricas", new DatosModulo("Métricas",
-                    "Tablero de salud del negocio.",
-                    List.of("Ingresos (excluye cancelados)", "Ventas por vendedor", "Pedidos por estado")));
+    private static final Map<String, DatosModulo> MODULOS_PRONTOS = Map.of();
 
     private record DatosModulo(String titulo, String descripcion, List<String> puntos) {
     }
@@ -372,6 +360,22 @@ public class VistaPrincipal {
             return new VistaNuevoProducto(app,
                     (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje),
                     () -> navegarAModulo("catalogo")).getRaiz();
+        }
+        if ("usuarios".equals(idModulo)) {
+            return new VistaUsuarios(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("global".equals(idModulo)) {
+            return new VistaCatalogoGlobal(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("categorias".equals(idModulo)) {
+            return new VistaSolicitudesCategorias(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
+        }
+        if ("metricas".equals(idModulo)) {
+            return new VistaMetricas(app,
+                    (tipo, mensaje) -> Avisos.mostrar(capaAvisos, tipo, mensaje)).getRaiz();
         }
         DatosModulo datos = MODULOS_PRONTOS.get(idModulo);
         if (datos == null) {

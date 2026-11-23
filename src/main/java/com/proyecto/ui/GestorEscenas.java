@@ -5,9 +5,11 @@ import com.proyecto.servicio.ServicioAuth;
 import com.proyecto.servicio.ServicioCarrito;
 import com.proyecto.servicio.ServicioCategorias;
 import com.proyecto.servicio.ServicioDeseos;
+import com.proyecto.servicio.ServicioMetricas;
 import com.proyecto.servicio.ServicioPedidos;
 import com.proyecto.servicio.ServicioProductos;
 import com.proyecto.servicio.ServicioResenas;
+import com.proyecto.servicio.ServicioUsuarios;
 import com.proyecto.servicio.SesionActual;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
@@ -34,6 +36,8 @@ public class GestorEscenas {
     private final ServicioPedidos servicioPedidos;
     private final ServicioResenas servicioResenas;
     private final ServicioDeseos servicioDeseos;
+    private final ServicioUsuarios servicioUsuarios;
+    private final ServicioMetricas servicioMetricas;
     private boolean temaOscuro = false;
 
     public GestorEscenas(Stage escenario, SesionActual sesion,
@@ -43,7 +47,9 @@ public class GestorEscenas {
                          ServicioCarrito servicioCarrito,
                          ServicioPedidos servicioPedidos,
                          ServicioResenas servicioResenas,
-                         ServicioDeseos servicioDeseos) {
+                         ServicioDeseos servicioDeseos,
+                         ServicioUsuarios servicioUsuarios,
+                         ServicioMetricas servicioMetricas) {
         this.escenario = escenario;
         this.sesion = sesion;
         this.servicioAuth = servicioAuth;
@@ -53,6 +59,8 @@ public class GestorEscenas {
         this.servicioPedidos = servicioPedidos;
         this.servicioResenas = servicioResenas;
         this.servicioDeseos = servicioDeseos;
+        this.servicioUsuarios = servicioUsuarios;
+        this.servicioMetricas = servicioMetricas;
     }
 
     /**
@@ -160,6 +168,14 @@ public class GestorEscenas {
 
     public ServicioDeseos getServicioDeseos() {
         return servicioDeseos;
+    }
+
+    public ServicioUsuarios getServicioUsuarios() {
+        return servicioUsuarios;
+    }
+
+    public ServicioMetricas getServicioMetricas() {
+        return servicioMetricas;
     }
 
     public SesionActual getSesion() {

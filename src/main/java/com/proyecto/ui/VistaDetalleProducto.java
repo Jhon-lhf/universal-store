@@ -98,9 +98,11 @@ public class VistaDetalleProducto {
         StackPane areaImagen = new StackPane();
         areaImagen.getStyleClass().add("detalle-imagen");
         areaImagen.setStyle("-fx-background-color: " + VistaTarjetaProducto.gradienteDe(nombreCategoria) + ";");
-        Icono icono = new Icono(VistaTarjetaProducto.iconoDe(nombreCategoria), 72);
-        icono.getStyleClass().add("icono-imagen");
-        areaImagen.getChildren().add(icono);
+        ImagenProducto imagen = new ImagenProducto(
+                producto.getNombreImagen(),
+                VistaTarjetaProducto.iconoDe(nombreCategoria),
+                280, 220);
+        areaImagen.getChildren().add(imagen);
 
         VBox info = new VBox(10);
         info.setAlignment(Pos.CENTER_LEFT);

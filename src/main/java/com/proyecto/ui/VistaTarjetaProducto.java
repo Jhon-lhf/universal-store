@@ -55,10 +55,12 @@ public class VistaTarjetaProducto extends VBox {
         setPrefWidth(224);
         setOnMouseClicked(e -> alHacerClic.run());
 
-        // --- Área de imagen (gradiente + ícono de la categoría) ---
-        Icono icono = new Icono(iconoDe(nombreCategoria), 44);
-        icono.getStyleClass().add("icono-imagen");
-        StackPane areaImagen = new StackPane(icono);
+        // --- Área de imagen (imagen real del producto o ícono de categoría como fallback) ---
+        ImagenProducto imagen = new ImagenProducto(
+                producto.getNombreImagen(),
+                iconoDe(nombreCategoria),
+                224, 120);
+        StackPane areaImagen = new StackPane(imagen);
         areaImagen.getStyleClass().add("area-imagen");
         areaImagen.setPrefSize(224, 120);
         areaImagen.setMaxSize(Double.MAX_VALUE, 120);

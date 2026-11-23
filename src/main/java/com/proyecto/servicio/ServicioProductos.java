@@ -134,6 +134,20 @@ public class ServicioProductos {
     }
 
     /**
+     * Todos los productos del catálogo (para el catálogo global del admin).
+     */
+    public List<Producto> listarTodos() {
+        return repositorioProductos.leerTodos();
+    }
+
+    /**
+     * Elimina un producto definitivamente (usado por el catálogo global del admin).
+     */
+    public void eliminarPorId(String id) {
+        repositorioProductos.eliminarPorId(id);
+    }
+
+    /**
      * Productos publicados por un vendedor (para su panel de stock).
      */
     public List<Producto> listarPorVendedor(String vendedorId) {

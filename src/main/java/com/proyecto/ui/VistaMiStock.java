@@ -100,7 +100,13 @@ public class VistaMiStock {
         tarjeta.getStyleClass().add("panel");
         tarjeta.setPadding(new Insets(16));
 
-        // --- Fila principal: título, categoría, precio ---
+        // --- Imagen del producto ---
+        ImagenProducto imagen = new ImagenProducto(
+                producto.getNombreImagen(),
+                VistaTarjetaProducto.iconoDe(nombreCategoria),
+                48, 48);
+
+        // --- Fila principal: imagen, título, categoría, precio ---
         Label titulo = new Label(producto.getTitulo());
         titulo.getStyleClass().add("nombre-sesion");
         Label detalle = new Label(nombreCategoria + "  ·  " + formatear(producto.getPrecio()));
@@ -124,7 +130,7 @@ public class VistaMiStock {
             chipEstado.getStyleClass().addAll("chip", "chip-exito");
         }
 
-        HBox filaSuperior = new HBox(10, titulo, espaciador, stockActual, chipEstado);
+        HBox filaSuperior = new HBox(12, imagen, titulo, espaciador, stockActual, chipEstado);
         filaSuperior.setAlignment(Pos.CENTER_LEFT);
 
         // --- Edición de stock ---

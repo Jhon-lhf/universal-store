@@ -4,6 +4,7 @@ import com.proyecto.estructuras.ColaFIFO;
 import com.proyecto.modelo.EstadoPedido;
 import com.proyecto.modelo.ItemPedido;
 import com.proyecto.modelo.Pedido;
+import com.proyecto.modelo.Producto;
 import com.proyecto.servicio.ExcepcionNegocio;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -138,8 +139,24 @@ public class VistaColaDespacho {
             if (!item.getVendedorId().equals(app.getSesion().getUsuario().getId())) {
                 continue;
             }
+            // Buscar el producto para mostrar su imagen y categoría.
+            Producto productoItem = app.getServicioProductos().obtenerPorId(item.getProductoId())
+                    .orElse(null);
+            String nombreCategoria = productoItem == null
+                    ? ""
+                    : app.getServicioProductos().nombreCategoria(productoItem.getCategoriaId());
+            String nombreImagen = productoItem == null
+                    ? null
+                    : productoItem.getNombreImagen();
+
+            ImagenProducto imagen = new ImagenProducto(
+                    nombreImagen,
+                    VistaTarjetaProducto.iconoDe(nombreCategoria),
+                    32, 32);
+
             HBox fila = new HBox(8);
             fila.setAlignment(Pos.CENTER_LEFT);
+            fila.getChildren().add(imagen);
             Label descripcion = new Label(item.getCantidad() + " × " + item.getTitulo());
             Region espaciadorItem = new Region();
             HBox.setHgrow(espaciadorItem, Priority.ALWAYS);

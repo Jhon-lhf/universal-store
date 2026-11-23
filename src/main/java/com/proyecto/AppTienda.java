@@ -10,9 +10,11 @@ import com.proyecto.servicio.ServicioAuth;
 import com.proyecto.servicio.ServicioCarrito;
 import com.proyecto.servicio.ServicioCategorias;
 import com.proyecto.servicio.ServicioDeseos;
+import com.proyecto.servicio.ServicioMetricas;
 import com.proyecto.servicio.ServicioPedidos;
 import com.proyecto.servicio.ServicioProductos;
 import com.proyecto.servicio.ServicioResenas;
+import com.proyecto.servicio.ServicioUsuarios;
 import com.proyecto.servicio.SesionActual;
 import com.proyecto.ui.GestorEscenas;
 import javafx.application.Application;
@@ -50,9 +52,11 @@ public class AppTienda extends Application {
                 servicioCarrito,
                 new ServicioPedidos(repoPedidos, repoProductos),
                 new ServicioResenas(repoProductos),
-                new ServicioDeseos(repoDeseos, repoProductos));
+                new ServicioDeseos(repoDeseos, repoProductos),
+                new ServicioUsuarios(repoUsuarios),
+                new ServicioMetricas(repoPedidos, repoProductos));
 
-        escenario.setTitle("proyecto Virtual");
+        escenario.setTitle("Tienda Virtual");
 
         app.mostrarLogin();
         escenario.show();

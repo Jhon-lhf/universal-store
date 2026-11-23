@@ -14,7 +14,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -198,12 +197,11 @@ public class VistaCarrito {
     private Node filaItem(ServicioCarrito.ItemDetallado item) {
         String nombreCategoria = app.getServicioProductos().nombreCategoria(item.producto().getCategoriaId());
 
-        StackPane miniImagen = new StackPane();
-        miniImagen.getStyleClass().add("mini-imagen");
-        miniImagen.setStyle("-fx-background-color: " + VistaTarjetaProducto.gradienteDe(nombreCategoria) + ";");
-        Icono icono = new Icono(VistaTarjetaProducto.iconoDe(nombreCategoria), 24);
-        icono.getStyleClass().add("icono-imagen");
-        miniImagen.getChildren().add(icono);
+        // --- Imagen del producto ---
+        ImagenProducto imagen = new ImagenProducto(
+                item.producto().getNombreImagen(),
+                VistaTarjetaProducto.iconoDe(nombreCategoria),
+                48, 48);
 
         VBox datos = new VBox(2);
         Label titulo = new Label(item.producto().getTitulo());
@@ -237,7 +235,7 @@ public class VistaCarrito {
         btnQuitar.setTooltip(new javafx.scene.control.Tooltip("Quitar del carrito"));
         btnQuitar.setOnAction(e -> quitar(item));
 
-        HBox fila = new HBox(12, miniImagen, datos, espaciador,
+        HBox fila = new HBox(12, imagen, datos, espaciador,
                 btnMenos, cantidad, btnMas, subtotal, btnQuitar);
         fila.getStyleClass().add("fila-lista");
         fila.setAlignment(Pos.CENTER_LEFT);
