@@ -56,7 +56,7 @@ public class AppTienda extends Application {
                 new ServicioUsuarios(repoUsuarios),
                 new ServicioMetricas(repoPedidos, repoProductos));
 
-        escenario.setTitle("Tienda Virtual");
+        escenario.setTitle("Universal Store");
 
         app.mostrarLogin();
         escenario.show();

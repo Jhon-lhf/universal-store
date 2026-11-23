@@ -71,7 +71,7 @@ public class GestorEscenas {
         Scene escena = new Scene(vista.getRaiz());
         aplicarEstilos(escena);
         escenario.setScene(escena);
-        escenario.setTitle("Tienda Virtual — Iniciar sesión");
+        escenario.setTitle("Universal Store — Iniciar sesión");
         // El shell principal deja mínimos de 960x640; hay que liberarlos para la ventana compacta.
         escenario.setMinWidth(0);
         escenario.setMinHeight(0);
@@ -89,7 +89,7 @@ public class GestorEscenas {
         aplicarEstilos(escena);
         escenario.setScene(escena);
         Usuario usuario = sesion.getUsuario();
-        escenario.setTitle("Tienda Virtual — " + usuario.getNombre());
+        escenario.setTitle("Universal Store — " + usuario.getNombre());
         escenario.setMinWidth(960);
         escenario.setMinHeight(640);
         ajustarVentana(1280, 820, true);

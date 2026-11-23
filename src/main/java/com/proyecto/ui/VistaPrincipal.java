@@ -134,9 +134,9 @@ public class VistaPrincipal {
         HBox marca = new HBox(10);
         marca.getStyleClass().add("marca-fila");
         marca.setAlignment(Pos.CENTER_LEFT);
-        StackPane logo = new StackPane(new Label("T"));
+        StackPane logo = new StackPane(new Label("U"));
         logo.getStyleClass().add("marca-logo");
-        Label nombreMarca = new Label("Tienda Virtual");
+        Label nombreMarca = new Label("Universal Store");
         nombreMarca.getStyleClass().add("marca");
         marca.getChildren().addAll(logo, nombreMarca);
 

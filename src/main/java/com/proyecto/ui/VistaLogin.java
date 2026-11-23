@@ -52,7 +52,7 @@ public class VistaLogin {
         // --- Marca ---
         VBox marca = new VBox(8);
         marca.setAlignment(Pos.CENTER);
-        marca.getChildren().addAll(crearLogo(), new Label("Tienda Virtual"));
+        marca.getChildren().addAll(crearLogo(), new Label("Universal Store"));
         marca.getChildren().get(1).getStyleClass().add("marca-grande");
         Label lema = new Label("Todo lo que buscas, en un solo lugar");
         lema.getStyleClass().add("texto-apagado");
@@ -128,7 +128,7 @@ public class VistaLogin {
     }
 
     private StackPane crearLogo() {
-        StackPane logo = new StackPane(new Label("T"));
+        StackPane logo = new StackPane(new Label("U"));
         logo.getStyleClass().add("marca-logo");
         StackPane.setAlignment(logo.getChildren().get(0), Pos.CENTER);
         return logo;
