@@ -55,6 +55,7 @@ public class VistaNuevoProducto {
     private final TextField campoNuevaCategoria = new TextField();
     private final TextArea campoJustificacion = new TextArea();
     private final Button btnPublicar = new Button("Publicar producto");
+    private final Button btnSolicitarCategoria = new Button("Solicitar categoría");
 
     public VistaNuevoProducto(GestorEscenas app,
                               BiConsumer<Avisos.Tipo, String> avisador,
@@ -138,11 +139,25 @@ public class VistaNuevoProducto {
             campoNuevaCategoria.setDisable(!activa);
             campoJustificacion.setDisable(!activa);
             comboCategoria.setDisable(activa);
+            // En modo solicitud, los datos del producto no son necesarios.
+            campoTitulo.setDisable(activa);
+            campoDescripcion.setDisable(activa);
+            campoPrecio.setDisable(activa);
+            campoStock.setDisable(activa);
+            campoNombreImagen.setDisable(activa);
+            btnSeleccionarImagen.setDisable(activa);
+            btnPublicar.setDisable(activa);
+            btnSolicitarCategoria.setDisable(!activa);
         });
 
         btnPublicar.getStyleClass().addAll("btn", "btn-primario");
         btnPublicar.setMaxWidth(Double.MAX_VALUE);
         btnPublicar.setOnAction(e -> publicar());
+
+        btnSolicitarCategoria.getStyleClass().add("btn");
+        btnSolicitarCategoria.setMaxWidth(Double.MAX_VALUE);
+        btnSolicitarCategoria.setDisable(true);
+        btnSolicitarCategoria.setOnAction(e -> solicitarCategoria());
 
         Button btnVolver = new Button("Volver al catálogo");
         btnVolver.getStyleClass().add("btn");
@@ -153,7 +168,7 @@ public class VistaNuevoProducto {
                 campoTitulo, campoDescripcion,
                 campoPrecio, campoStock, comboCategoria, filaImagen,
                 chkCategoriaNueva, lblCategoriaNueva, campoNuevaCategoria, campoJustificacion,
-                btnPublicar, btnVolver);
+                btnPublicar, btnSolicitarCategoria, btnVolver);
 
         raiz.getChildren().addAll(titulo, subtitulo, formulario);
     }
@@ -195,26 +210,14 @@ public class VistaNuevoProducto {
             String descripcion = campoDescripcion.getText();
             double precio = Double.parseDouble(campoPrecio.getText().trim().replace(',', '.'));
             int stock = Integer.parseInt(campoStock.getText().trim());
-            String categoriaId;
 
             Usuario vendedor = app.getSesion().getUsuario();
-
-            if (chkCategoriaNueva.isSelected()) {
-                // Solicitar categoría nueva (queda PENDIENTE para el admin)
-                String nombre = campoNuevaCategoria.getText();
-                String justificacion = campoJustificacion.getText();
-                app.getServicioCategorias().solicitar(nombre, justificacion, vendedor);
-                avisador.accept(Avisos.Tipo.EXITO,
-                        "Solicitud de categoría enviada. Un administrador la revisará pronto.");
-                limpiarFormulario();
-                return;
-            }
 
             Categoria seleccionada = comboCategoria.getValue();
             if (seleccionada == null) {
                 throw new ExcepcionNegocio("Selecciona una categoría");
             }
-            categoriaId = seleccionada.getId();
+            String categoriaId = seleccionada.getId();
 
             ServicioProductos servicio = app.getServicioProductos();
             servicio.crear(new ServicioProductos.DatosProducto(
@@ -229,6 +232,23 @@ public class VistaNuevoProducto {
         }
     }
 
+    /**
+     * Solicita una categoría nueva sin necesidad de publicar un producto.
+     */
+    private void solicitarCategoria() {
+        try {
+            String nombre = campoNuevaCategoria.getText();
+            String justificacion = campoJustificacion.getText();
+            Usuario vendedor = app.getSesion().getUsuario();
+            app.getServicioCategorias().solicitar(nombre, justificacion, vendedor);
+            avisador.accept(Avisos.Tipo.EXITO,
+                    "Solicitud de categoría enviada. Un administrador la revisará pronto.");
+            limpiarFormulario();
+        } catch (ExcepcionNegocio e) {
+            avisador.accept(Avisos.Tipo.ERROR, e.getMessage());
+        }
+    }
+
     private void limpiarFormulario() {
         campoTitulo.clear();
         campoDescripcion.clear();
@@ -236,10 +256,20 @@ public class VistaNuevoProducto {
         campoStock.clear();
         campoNombreImagen.clear();
         nombreImagenSeleccionada = null;
+        campoNuevaCategoria.clear();
+        campoJustificacion.clear();
         chkCategoriaNueva.setSelected(false);
         campoNuevaCategoria.setDisable(true);
         campoJustificacion.setDisable(true);
+        campoTitulo.setDisable(false);
+        campoDescripcion.setDisable(false);
+        campoPrecio.setDisable(false);
+        campoStock.setDisable(false);
+        campoNombreImagen.setDisable(false);
+        btnSeleccionarImagen.setDisable(false);
         comboCategoria.setDisable(false);
+        btnPublicar.setDisable(false);
+        btnSolicitarCategoria.setDisable(true);
         cargarCategorias();
     }
 
